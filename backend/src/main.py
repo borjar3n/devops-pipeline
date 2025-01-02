@@ -13,7 +13,7 @@ app.add_middleware(
 
 @app.get("/")
 async def read_root():
-    return {"message": "Hello DevOps!"}
+    return {"message": "Hello DevOps V2!"}
 
 @app.get("/health")
 async def health_check():
