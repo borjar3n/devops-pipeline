@@ -1,31 +1,31 @@
-# Etapa de construcción
-FROM node:18-alpine as builder
+# Build stage
+FROM node:18-alpine as build
 
 WORKDIR /app
 
-# Copiar archivos de configuración
+# Copy package files
 COPY package*.json ./
-COPY vite.config.js ./
 
-# Instalar dependencias
+# Install dependencies
 RUN npm install
 
-# Copiar código fuente
+# Copy source code
 COPY . .
 
-# Construir la aplicación
+# Build application
 RUN npm run build
 
-# Etapa de producción
+# Production stage
 FROM nginx:alpine
 
-# Copiar la configuración de nginx
+# Copy built assets from build stage
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Copy nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copiar los archivos construidos
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Exponer puerto 80
+# Expose port 80
 EXPOSE 80
 
+# Start nginx
 CMD ["nginx", "-g", "daemon off;"]

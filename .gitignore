@@ -15,3 +15,6 @@ dist/
 
 # Otros
 *.log
+
+monitoring/grafana/
+monitoring/prometheus/data/

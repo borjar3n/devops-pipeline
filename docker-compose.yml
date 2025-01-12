@@ -1,20 +1,29 @@
-version: '3.8'
-
 services:
+  db:
+    image: postgres:13
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=inventory
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - devops-network
+
   backend:
     build: ./backend
     container_name: devops-backend
     ports:
       - "8000:8000"
     environment:
-      - ENVIRONMENT=development
-    volumes:
-      - ./backend:/app
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/inventory
+    depends_on:
+      - db
+    networks:
+      - devops-network
+    restart: unless-stopped
 
   frontend:
     build: ./frontend
@@ -23,32 +32,46 @@ services:
       - "80:80"
     depends_on:
       - backend
-    environment:
-      - NODE_ENV=production
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+    networks:
+      - devops-network
+    restart: unless-stopped
 
   prometheus:
-    image: prom/prometheus
+    image: prom/prometheus:latest
     container_name: prometheus
+    user: "0:0"
     ports:
       - "9090:9090"
     volumes:
-      - ./monitoring/prometheus:/etc/prometheus
+      - ./monitoring/prometheus:/etc/prometheus:ro
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - devops-network
+    restart: unless-stopped
 
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:latest
     container_name: grafana
+    user: "472:472"
     ports:
       - "3000:3000"
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:
       - ./monitoring/grafana:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    networks:
+      - devops-network
+    restart: unless-stopped
     depends_on:
       - prometheus
+
+networks:
+  devops-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
