@@ -5,15 +5,18 @@ import {
   Typography,
   Stack,
   CircularProgress,
-  Alert
+  Alert,
 } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import DashboardLayout from './layouts/DashboardLayout';
 import StatsCards from './components/StatsCards';
 import ProductsTable from './components/ProductsTable';
+import ProductFormModal from './components/ProductFormModal';
+import StockMovementModal from './components/StockMovementModal';
 import api from './services/api';
 
 function App() {
+  // Estados
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -24,10 +27,21 @@ function App() {
     monthlyMovements: 0
   });
 
-  const fetchProducts = async () => {
+  // Estados de los modales
+  const [productModalOpen, setProductModalOpen] = useState(false);
+  const [stockModalOpen, setStockModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [stockModalType, setStockModalType] = useState('in');
+
+  // Cargar datos
+  const fetchData = async () => {
     try {
-      const response = await api.getProducts();
-      const productsData = response.data;
+      const [productsResponse, monthlyMovementsResponse] = await Promise.all([
+        api.getProducts(),
+        api.getMonthlyMovements()
+      ]);
+      
+      const productsData = productsResponse.data;
       setProducts(productsData);
       
       // Calcular estadísticas
@@ -35,30 +49,62 @@ function App() {
         totalProducts: productsData.length,
         lowStockItems: productsData.filter(p => p.current_stock <= p.minimum_stock).length,
         totalValue: productsData.reduce((sum, p) => sum + (p.price * p.current_stock), 0),
-        monthlyMovements: 0 // Esto se podría obtener de una API separada
+        monthlyMovements: monthlyMovementsResponse.data.count
       };
       setStats(statsData);
       setLoading(false);
     } catch (err) {
-      setError('Error loading products. Please try again later.');
+      console.error('Error fetching data:', err);
+      setError('Error loading data. Please try again later.');
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchProducts();
+    fetchData();
   }, []);
 
-  const handleEdit = (product) => {
-    console.log('Edit product:', product);
+  // Manejadores para los modales
+  const handleAddProduct = () => {
+    setSelectedProduct(null);
+    setProductModalOpen(true);
+  };
+
+  const handleEditProduct = (product) => {
+    setSelectedProduct(product);
+    setProductModalOpen(true);
   };
 
   const handleAddStock = (product) => {
-    console.log('Add stock to:', product);
+    setSelectedProduct(product);
+    setStockModalType('in');
+    setStockModalOpen(true);
   };
 
   const handleRemoveStock = (product) => {
-    console.log('Remove stock from:', product);
+    setSelectedProduct(product);
+    setStockModalType('out');
+    setStockModalOpen(true);
+  };
+
+  const handleProductModalClose = () => {
+    setProductModalOpen(false);
+    setSelectedProduct(null);
+  };
+
+  const handleStockModalClose = () => {
+    setStockModalOpen(false);
+    setSelectedProduct(null);
+  };
+
+  const handleProductSaved = () => {
+    fetchData();
+    handleProductModalClose();
+  };
+
+  const handleStockUpdated = () => {
+    fetchData();
+    handleStockModalClose();
   };
 
   if (loading) {
@@ -92,7 +138,7 @@ function App() {
           <Button
             variant="contained"
             startIcon={<AddIcon />}
-            onClick={() => console.log('Add new product')}
+            onClick={handleAddProduct}
           >
             Add Product
           </Button>
@@ -106,11 +152,28 @@ function App() {
           </Typography>
           <ProductsTable
             products={products}
-            onEdit={handleEdit}
+            onEdit={handleEditProduct}
             onAddStock={handleAddStock}
             onRemoveStock={handleRemoveStock}
           />
         </Box>
+
+        <ProductFormModal
+          open={productModalOpen}
+          onClose={handleProductModalClose}
+          product={selectedProduct}
+          onSuccess={handleProductSaved}
+        />
+
+        {selectedProduct && (
+          <StockMovementModal
+            open={stockModalOpen}
+            onClose={handleStockModalClose}
+            product={selectedProduct}
+            type={stockModalType}
+            onSuccess={handleStockUpdated}
+          />
+        )}
       </Stack>
     </DashboardLayout>
   );

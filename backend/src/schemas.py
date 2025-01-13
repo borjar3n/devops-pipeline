@@ -1,11 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime
-from enum import Enum
-
-class MovementType(str, Enum):
-    IN = "in"
-    OUT = "out"
+from .models import MovementType
 
 class ProductBase(BaseModel):
     name: str
@@ -22,18 +18,9 @@ class ProductUpdate(ProductBase):
     sku: Optional[str] = None
     price: Optional[float] = None
 
-class Product(ProductBase):
-    id: int
-    current_stock: int
-    created_at: datetime
-    updated_at: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
-
 class MovementBase(BaseModel):
     product_id: int
-    quantity: int
+    quantity: int = Field(gt=0)
     type: MovementType
     notes: Optional[str] = None
 
@@ -43,7 +30,15 @@ class MovementCreate(MovementBase):
 class Movement(MovementBase):
     id: int
     timestamp: datetime
-    product: Product
+
+    class Config:
+        from_attributes = True
+
+class Product(ProductBase):
+    id: int
+    current_stock: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True

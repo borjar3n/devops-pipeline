@@ -17,7 +17,7 @@ import {
   Remove as RemoveIcon
 } from '@mui/icons-material';
 
-const ProductsTable = ({ products, onEdit, onAddStock, onRemoveStock }) => {
+const ProductsTable = ({ products = [], onEdit, onAddStock, onRemoveStock }) => {
   const getStockStatus = (currentStock, minimumStock) => {
     if (currentStock <= 0) {
       return <Chip label="Out of Stock" color="error" size="small" />;
@@ -26,6 +26,21 @@ const ProductsTable = ({ products, onEdit, onAddStock, onRemoveStock }) => {
       return <Chip label="Low Stock" color="warning" size="small" />;
     }
     return <Chip label="In Stock" color="success" size="small" />;
+  };
+
+  const handleEditClick = (product) => {
+    console.log('Edit clicked:', product);
+    if (onEdit) onEdit(product);
+  };
+
+  const handleAddStockClick = (product) => {
+    console.log('Add stock clicked:', product);
+    if (onAddStock) onAddStock(product);
+  };
+
+  const handleRemoveStockClick = (product) => {
+    console.log('Remove stock clicked:', product);
+    if (onRemoveStock) onRemoveStock(product);
   };
 
   return (
@@ -47,7 +62,7 @@ const ProductsTable = ({ products, onEdit, onAddStock, onRemoveStock }) => {
               <TableCell>{product.sku}</TableCell>
               <TableCell>{product.name}</TableCell>
               <TableCell align="right">
-                ${product.price.toFixed(2)}
+                ${Number(product.price).toFixed(2)}
               </TableCell>
               <TableCell align="right">
                 {product.current_stock}
@@ -59,7 +74,7 @@ const ProductsTable = ({ products, onEdit, onAddStock, onRemoveStock }) => {
                 <Tooltip title="Edit">
                   <IconButton 
                     size="small"
-                    onClick={() => onEdit(product)}
+                    onClick={() => handleEditClick(product)}
                   >
                     <EditIcon />
                   </IconButton>
@@ -68,7 +83,7 @@ const ProductsTable = ({ products, onEdit, onAddStock, onRemoveStock }) => {
                   <IconButton 
                     size="small" 
                     color="success"
-                    onClick={() => onAddStock(product)}
+                    onClick={() => handleAddStockClick(product)}
                   >
                     <AddIcon />
                   </IconButton>
@@ -77,7 +92,7 @@ const ProductsTable = ({ products, onEdit, onAddStock, onRemoveStock }) => {
                   <IconButton 
                     size="small" 
                     color="error"
-                    onClick={() => onRemoveStock(product)}
+                    onClick={() => handleRemoveStockClick(product)}
                   >
                     <RemoveIcon />
                   </IconButton>
