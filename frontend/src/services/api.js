@@ -1,25 +1,25 @@
 import axios from 'axios';
 
-const baseURL = 'http://localhost:8000';
-
-const api = axios.create({
-  baseURL,
+const axiosInstance = axios.create({
+  baseURL: 'http://localhost:8000',
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-export default {
+const api = {
   // Productos
-  getProducts: () => api.get('/products/'),
-  getProduct: (id) => api.get(`/products/${id}`),
-  createProduct: (data) => api.post('/products/', data),
-  updateProduct: (id, data) => api.put(`/products/${id}`, data),
+  getProducts: () => axiosInstance.get('/products/'),
+  getProduct: (id) => axiosInstance.get(`/products/${id}`),
+  createProduct: (data) => axiosInstance.post('/products/', data),
+  updateProduct: (id, data) => axiosInstance.put(`/products/${id}`, data),
   
   // Movimientos
-  createMovement: (data) => api.post('/movements/', data),
+  createMovement: (data) => axiosInstance.post('/movements/', data),
   
   // Métricas
-  getLowStock: () => api.get('/metrics/low-stock'),
-  getMonthlyMovements: () => api.get('/metrics/monthly-movements'),
+  getLowStock: () => axiosInstance.get('/metrics/low-stock'),
+  getMonthlyMovements: () => axiosInstance.get('/metrics/monthly-movements'),
 };
+
+export default api;
