@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import App from '../App';
 
@@ -16,19 +16,29 @@ vi.mock('../services/api', () => ({
 }));
 
 describe('App', () => {
-  beforeEach(() => {
-    render(<App />);
+  beforeEach(async () => {
+    await act(async () => {
+      render(<App />);
+    });
   });
 
-  it('renders dashboard title', () => {
-    const title = screen.getByText('Inventory Management');
+  it('renders header title', () => {
+    const title = screen.getByRole('heading', {
+      name: /inventory management/i,
+    });
     expect(title).toBeDefined();
   });
 
-  it('renders main navigation items', () => {
-    const dashboard = screen.getByText('Dashboard');
-    const products = screen.getByText('Products');
-    expect(dashboard).toBeDefined();
-    expect(products).toBeDefined();
+  it('renders navigation menu items', () => {
+    // Buscar por el rol y el nombre del botón
+    const dashboardButton = screen.getByRole('button', {
+      name: /dashboard/i,
+    });
+    const productsButton = screen.getByRole('button', {
+      name: /products/i,
+    });
+
+    expect(dashboardButton).toBeDefined();
+    expect(productsButton).toBeDefined();
   });
 });
