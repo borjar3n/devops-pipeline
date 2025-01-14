@@ -90,7 +90,7 @@ jobs:
           sonar.organization: borjar3n
           sonar.projectKey: borjar3n_devops-pipeline
 
-build-and-push:
+  build-and-push:
     needs: [sonarcloud]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
