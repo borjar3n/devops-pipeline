@@ -4,14 +4,13 @@ services:
     ports:
       - "5433:5432"
     environment:
-      - POSTGRES_USER=${DB_USER:-postgres}
-      - POSTGRES_PASSWORD=${DB_PASSWORD:-postgres}
-      - POSTGRES_DB=${DB_NAME:-inventory}
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=inventory
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - devops-network
-
 
   backend:
     build: ./backend
@@ -19,15 +18,12 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DB_USER=${DB_USER:-postgres}
-      - DB_PASSWORD=${DB_PASSWORD:-postgres}
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_NAME=${DB_NAME:-inventory}
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/inventory
     depends_on:
       - db
     networks:
       - devops-network
+    restart: unless-stopped
 
   frontend:
     build: ./frontend
