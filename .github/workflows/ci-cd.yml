@@ -26,14 +26,16 @@ jobs:
       - name: Run tests with coverage
         run: |
           cd backend
-          python -m pytest --cov=src tests/ --cov-report=xml
+          # Cambiado para generar tanto XML como HTML
+          python -m pytest --cov=src tests/ --cov-report=xml:coverage.xml --cov-report=html
           
       - name: Store coverage report
         uses: actions/upload-artifact@v4
         with:
           name: backend-coverage
-          path: backend/coverage.xml
-          retention-days: 1
+          path: |
+            backend/coverage.xml
+            backend/htmlcov
 
   frontend-tests:
     runs-on: ubuntu-latest
@@ -87,8 +89,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          sonar.organization: borjar3n
-          sonar.projectKey: borjar3n_devops-pipeline
+        with:
+          args: >
+            -Dsonar.organization=borjar3n
+            -Dsonar.projectKey=borjar3n_devops-pipeline
+            -Dsonar.python.coverage.reportPaths=backend/coverage.xml
+            -Dsonar.javascript.lcov.reportPaths=frontend/coverage/lcov.info
+            -Dsonar.coverage.exclusions=**/tests/**,**/node_modules/**
+            -Dsonar.test.exclusions=**/tests/**,**/__tests__/**
 
   build-and-push:
     needs: [sonarcloud]

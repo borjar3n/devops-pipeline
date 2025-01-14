@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "test": "vitest",
-    "test:coverage": "vitest run --coverage --reporter=html --reporter=lcov",
+    "test:coverage": "vitest run --coverage",
     "lint": "eslint src --ext js,jsx",
     "preview": "vite preview"
   },
@@ -39,14 +39,11 @@
   "vitest": {
     "coverage": {
       "provider": "v8",
-      "reporter": ["text", "html", "lcov"],
-      "reportsDirectory": "./coverage",
-      "exclude": [
-        "node_modules/",
-        "dist/",
-        "**/*.test.{js,jsx}",
-        "**/__tests__/**"
-      ]
+      "reporter": ["text", "json", "html"],
+      "reportsDirectory": "coverage"
+    },
+    "test": {
+      "environment": "jsdom"
     }
   }
 }
