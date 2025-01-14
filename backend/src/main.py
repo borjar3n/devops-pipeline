@@ -10,7 +10,7 @@ from .database import get_db, SessionLocal
 
 app = FastAPI(
     title="Inventory API",
-    description="API for managing inventory",
+    description="API for managing inventory.",
     version="1.0.0"
 )
 
