@@ -54,7 +54,6 @@ jobs:
         run: |
           cd frontend
           npm run test:coverage
-          ls -la coverage
           
       - name: Store coverage report
         uses: actions/upload-artifact@v4
@@ -63,7 +62,7 @@ jobs:
           path: frontend/coverage/
           retention-days: 1
 
-  sonarqube:
+  sonar:
     needs: [backend-tests, frontend-tests]
     runs-on: ubuntu-latest
     steps:
@@ -83,24 +82,14 @@ jobs:
           name: frontend-coverage
           path: frontend/coverage/
           
-      - name: Debug coverage files
-        run: |
-          ls -la backend/
-          ls -la frontend/coverage/
-          
-      - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@master
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        with:
-          args: >
-            -Dsonar.projectKey=inventory-system
-            -Dsonar.python.coverage.reportPaths=backend/coverage.xml
-            -Dsonar.javascript.lcov.reportPaths=frontend/coverage/lcov.info
 
   build-and-push:
-    needs: [sonarqube]
+    needs: [sonar]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
