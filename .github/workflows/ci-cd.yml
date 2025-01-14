@@ -90,7 +90,7 @@ jobs:
           sonar.organization: borjar3n
           sonar.projectKey: borjar3n_devops-pipeline
 
-  build-and-push:
+build-and-push:
     needs: [sonarcloud]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
@@ -106,7 +106,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           
-     - name: Build and push Backend
+      - name: Build and push Backend
         uses: docker/build-push-action@v5
         with:
           context: ./backend
