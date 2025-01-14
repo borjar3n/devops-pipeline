@@ -1,8 +1,4 @@
 services:
-
-
-
-
   db:
     image: postgres:13
     ports:
@@ -17,7 +13,7 @@ services:
       - devops-network
 
   backend:
-    build: ./backend
+    image: ${DOCKER_USERNAME}/inventory-backend:latest
     container_name: devops-backend
     ports:
       - "8000:8000"
@@ -30,7 +26,7 @@ services:
     restart: unless-stopped
 
   frontend:
-    build: ./frontend
+    image: ${DOCKER_USERNAME}/inventory-frontend:latest
     container_name: devops-frontend
     ports:
       - "80:80"
