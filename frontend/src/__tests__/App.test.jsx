@@ -1,18 +1,16 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import App from '../App';
 
-// Mock axios
-vi.mock('axios', () => ({
+// Mock de las respuestas de la API
+vi.mock('../services/api', () => ({
   default: {
-    create: () => ({
-      get: vi.fn(() => Promise.resolve({ 
-        data: {
-          message: 'Welcome to the Inventory API',
-          count: 0
-        }
-      }))
+    getProducts: vi.fn().mockResolvedValue({ 
+      data: [] 
+    }),
+    getMonthlyMovements: vi.fn().mockResolvedValue({ 
+      data: { count: 0 } 
     })
   }
 }));
@@ -22,8 +20,15 @@ describe('App', () => {
     render(<App />);
   });
 
-  it('renders loading state initially', () => {
-    const loading = screen.getByText(/loading/i);
-    expect(loading).toBeDefined();
+  it('renders dashboard title', () => {
+    const title = screen.getByText('Inventory Management');
+    expect(title).toBeDefined();
+  });
+
+  it('renders main navigation items', () => {
+    const dashboard = screen.getByText('Dashboard');
+    const products = screen.getByText('Products');
+    expect(dashboard).toBeDefined();
+    expect(products).toBeDefined();
   });
 });

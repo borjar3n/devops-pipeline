@@ -11,7 +11,17 @@ export default defineConfig({
     css: true,
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'lcov'],
-    },
-  },
+      reporter: ['text', 'json', 'html'],
+      exclude: [
+        'coverage/**',
+        'dist/**',
+        '**/[.]**',
+        'packages/*/test?(s)/**',
+        '**/*.d.ts',
+        '**/virtual:*',
+        '**/__mocks__/*',
+        '**/node_modules/**'
+      ]
+    }
+  }
 });
