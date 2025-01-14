@@ -10,4 +10,9 @@ scrape_configs:
   - job_name: 'backend'
     static_configs:
       - targets: ['backend:8000']
-    metrics_path: /metrics
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
