@@ -62,7 +62,7 @@ jobs:
           path: frontend/coverage/
           retention-days: 1
 
-  sonar:
+  sonarcloud:
     needs: [backend-tests, frontend-tests]
     runs-on: ubuntu-latest
     steps:
@@ -83,13 +83,15 @@ jobs:
           path: frontend/coverage/
           
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: sonarsource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          sonar.organization: borjar3n
+          sonar.projectKey: borjar3n_devops-pipeline
 
   build-and-push:
-    needs: [sonar]
+    needs: [sonarcloud]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
