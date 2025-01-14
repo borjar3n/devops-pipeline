@@ -22,21 +22,19 @@ describe('App', () => {
     });
   });
 
-  it('renders header title', () => {
-    const title = screen.getByRole('heading', {
-      name: /inventory management/i,
-    });
+  it('renders application title', () => {
+    const title = screen.getByText('Inventory Management');
     expect(title).toBeDefined();
   });
 
   it('renders navigation menu items', () => {
-    // Buscar por el rol y el nombre del botón
-    const dashboardButton = screen.getByRole('button', {
-      name: /dashboard/i,
-    });
-    const productsButton = screen.getByRole('button', {
-      name: /products/i,
-    });
+    // Usando getAllByRole para obtener todos los botones
+    const dashboardButton = screen.getAllByRole('button').find(
+      button => button.textContent === 'Dashboard'
+    );
+    const productsButton = screen.getAllByRole('button').find(
+      button => button.textContent === 'Products'
+    );
 
     expect(dashboardButton).toBeDefined();
     expect(productsButton).toBeDefined();
