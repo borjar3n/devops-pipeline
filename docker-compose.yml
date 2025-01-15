@@ -13,7 +13,7 @@ services:
       - devops-network
 
   backend:
-    image: ${DOCKER_USERNAME}/inventory-backend:latest
+    image: $borjar3n/inventory-backend:latest
     container_name: devops-backend
     ports:
       - "8000:8000"
@@ -26,7 +26,7 @@ services:
     restart: unless-stopped
 
   frontend:
-    image: ${DOCKER_USERNAME}/inventory-frontend:latest
+    image: $borjar3n/inventory-frontend:latest
     container_name: devops-frontend
     environment:
       - VITE_API_URL=http://ec2-204-236-241-81.compute-1.amazonaws.com:8000
