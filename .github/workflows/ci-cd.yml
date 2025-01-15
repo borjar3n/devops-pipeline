@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [ rama-prueba ]
   pull_request:
-    branches: [ main ]
+    branches: [ rama-prueba ]
 
 jobs:
   backend-tests:
