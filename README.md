@@ -1,104 +1,208 @@
-# Pipeline DevOps - Proyecto Final
+# Sistema de Gestión de Inventario
 
-Este proyecto implementa un pipeline completo de CI/CD utilizando modernas prácticas DevOps. El proyecto consiste en una aplicación web con backend en FastAPI y frontend en React, desplegada utilizando contenedores Docker y orquestada con Kubernetes.
+[![CI/CD Pipeline](https://github.com/borjar3n/devops-pipeline/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/borjar3n/devops-pipeline/actions/workflows/ci-cd.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=borjar3n_devops-pipeline&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=borjar3n_devops-pipeline)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=borjar3n_devops-pipeline&metric=coverage)](https://sonarcloud.io/summary/new_code?id=borjar3n_devops-pipeline)
 
-## Arquitectura
+Sistema de gestión de inventario construido con FastAPI y React, implementando un pipeline completo de DevOps.
 
-- **Backend**: FastAPI (Python)
-- **Frontend**: React + Vite
-- **Base de Datos**: PostgreSQL
-- **Cache**: Redis
-- **Contenedores**: Docker + Docker Compose
-- **Orquestación**: Kubernetes
-- **CI/CD**: GitHub Actions
-- **Monitorización**: Prometheus + Grafana
-- **Seguridad**: HashiCorp Vault
-- **Calidad**: SonarQube
-- **Testing**: Pytest, Jest, k6
+## 🚀 Características
 
-## Requisitos
+- ✨ Frontend moderno con React y Material-UI
+- 🔥 Backend robusto con FastAPI
+- 📊 Monitorización con Prometheus y Grafana
+- 🔄 Pipeline CI/CD completo
+- 🐳 Containerización con Docker
+- 📈 Análisis de código con SonarCloud
+- ☁️ Despliegue en AWS
 
+## 🛠️ Tecnologías Utilizadas
+
+### Frontend
+- React 18
+- Material-UI
+- Axios
+- Vite
+- Vitest para testing
+
+### Backend
+- Python 3.11
+- FastAPI
+- SQLAlchemy
+- PostgreSQL
+- Pytest
+
+### DevOps
 - Docker & Docker Compose
-- Python 3.11+
+- GitHub Actions
+- SonarCloud
+- AWS EC2
+- Prometheus & Grafana
+
+## 🏗️ Arquitectura
+
+```mermaid
+graph LR
+    A[Frontend - React] --> B[Backend - FastAPI]
+    B --> C[(PostgreSQL)]
+    B --> D[Prometheus]
+    D --> E[Grafana]
+```
+
+## 🚦 Requisitos Previos
+
+- Docker y Docker Compose
 - Node.js 18+
-- Make
-- kubectl (para despliegue en K8s)
+- Python 3.11+
+- Cuenta AWS (para despliegue)
+- Cuenta Docker Hub
 
-## Instalación
+## 🔧 Instalación y Uso Local
 
-1. Clonar el repositorio:
+1. **Clonar el repositorio**
 ```bash
-git clone https://github.com/usuario/devops-pipeline
+git clone https://github.com/borjar3n/devops-pipeline.git
 cd devops-pipeline
 ```
 
-2. Instalar dependencias:
+2. **Configurar variables de entorno**
 ```bash
-make install
-```
-
-3. Configurar variables de entorno:
-```bash
+# Backend
+cd backend
 cp .env.example .env
-# Editar .env con tus valores
+# Editar .env con tus configuraciones
+
+# Frontend
+cd frontend
+cp .env.example .env
 ```
 
-4. Iniciar el entorno de desarrollo:
+3. **Iniciar con Docker Compose**
 ```bash
-make dev
+docker-compose up -d
 ```
 
-## Comandos Disponibles
+La aplicación estará disponible en:
+- Frontend: http://localhost:80
+- Backend: http://localhost:8000
+- Grafana: http://localhost:3000
 
-- `make install`: Instala todas las dependencias
-- `make dev`: Inicia el entorno de desarrollo
-- `make test`: Ejecuta todos los tests
-- `make lint`: Ejecuta los linters
-- `make build`: Construye las imágenes Docker
-- `make deploy`: Despliega en producción
+## 🧪 Tests
 
-## Pipeline CI/CD
+### Backend
+```bash
+cd backend
+pip install -r requirements.txt
+pytest
+```
 
-El pipeline incluye las siguientes etapas:
+### Frontend
+```bash
+cd frontend
+npm install
+npm run test
+```
 
-1. **Verificación de Código**
-   - Linting (flake8, eslint)
-   - Formateo (black, prettier)
-   - Tests unitarios
-   - Análisis de seguridad
+## 📦 Estructura del Proyecto
 
-2. **Build y Tests**
-   - Construcción de imágenes Docker
-   - Tests de integración
-   - Tests de carga
-   - Análisis de calidad (SonarQube)
+```
+/
+├── backend/
+│   ├── src/
+│   │   ├── main.py
+│   │   ├── models.py
+│   │   └── database.py
+│   ├── tests/
+│   └── Dockerfile
+├── frontend/
+│   ├── src/
+│   ├── tests/
+│   └── Dockerfile
+├── monitoring/
+│   └── prometheus/
+├── .github/workflows/
+└── docker-compose.yml
+```
 
-3. **Despliegue**
-   - Automático a staging
-   - Manual a producción
-   - Monitorización post-despliegue
+## 🚀 Pipeline CI/CD
 
-## Monitorización
+El pipeline incluye:
+1. Tests automatizados
+2. Análisis de código
+3. Construcción de imágenes Docker
+4. Despliegue automático
 
-- Métricas: http://grafana.localhost
-- Logs: http://kibana.localhost
-- APM: http://apm.localhost
+## 📊 Monitorización
 
-## Seguridad
+### Métricas Disponibles
+- Rendimiento de API
+- Uso de recursos
+- Métricas de negocio
+- Estado del sistema
 
-- Análisis automático de dependencias
-- Escaneo de contenedores
-- Gestión segura de secretos con Vault
-- SAST y DAST integrados
+### Dashboard
+- Grafana: http://localhost:3000
+- Usuario por defecto: admin
+- Contraseña por defecto: admin
 
-## Contribuir
+## 🌐 API Endpoints
 
-1. Fork el repositorio
-2. Crear una rama feature (`git checkout -b feature/AmazingFeature`)
-3. Commit de cambios (`git commit -m 'Add some AmazingFeature'`)
+### Productos
+- `GET /products/` - Listar productos
+- `POST /products/` - Crear producto
+- `GET /products/{id}` - Obtener producto
+- `PUT /products/{id}` - Actualizar producto
+
+### Movimientos
+- `POST /movements/` - Registrar movimiento
+- `GET /metrics/monthly-movements` - Obtener movimientos mensuales
+
+## 🔐 Seguridad
+
+- CORS configurado
+- Variables de entorno seguras
+- Secretos en GitHub Actions
+- Grupos de seguridad AWS
+
+## 📝 Guía de Contribución
+
+1. Fork del repositorio
+2. Crear rama feature (`git checkout -b feature/AmazingFeature`)
+3. Commit cambios (`git commit -m 'Add some AmazingFeature'`)
 4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abrir un Pull Request
+5. Abrir Pull Request
 
-## Licencia
+## 🚨 Solución de Problemas Comunes
 
-Distribuido bajo la licencia MIT. Ver `LICENSE` para más información.
+### Error en Conexión a Base de Datos
+```bash
+# Verificar logs
+docker-compose logs db
+
+# Verificar conexión
+docker-compose exec db pg_isready
+```
+
+### Error en Tests
+```bash
+# Limpiar cache de pytest
+pytest --cache-clear
+
+# Ver cobertura detallada
+pytest --cov=src tests/ --cov-report=term-missing
+```
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE.md](LICENSE.md) para detalles
+
+## 👥 Autores
+
+- **Francisco De Borja Arenas Conde Bandres** - *Trabajo Inicial* - [borjar3n](https://github.com/borjar3n)
+
+## 🙏 Reconocimientos
+
+- FastAPI por el excelente framework
+- React por la biblioteca frontend
+- GitHub Actions por el sistema CI/CD
+- AWS por la infraestructura cloud
