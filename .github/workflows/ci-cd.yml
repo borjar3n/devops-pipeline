@@ -113,7 +113,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           
-      - name: Build and push Backend
+            - name: Build and push Backend
         uses: docker/build-push-action@v5
         with:
           context: ./backend
@@ -123,7 +123,7 @@ jobs:
       - name: Build and push Frontend
         uses: docker/build-push-action@v5
         with:
-          context: ./frontend
+          context: ./frontend  # Asegúrate que esto apunta al directorio frontend
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/inventory-frontend:latest
           build-args: |
