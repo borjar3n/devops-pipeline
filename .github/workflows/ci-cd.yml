@@ -127,7 +127,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/inventory-frontend:latest
           build-args: |
-            VITE_API_URL=http://ec2-204-236-241-81.compute-1.amazonaws.com:8000
+            VITE_API_URL=http://ec2-107-20-73-221.compute-1.amazonaws.com:8000
   deploy:
     needs: [build-and-push]
     runs-on: ubuntu-latest
