@@ -28,6 +28,8 @@ services:
   frontend:
     image: ${DOCKER_USERNAME}/inventory-frontend:latest
     container_name: devops-frontend
+    environment:
+      - VITE_API_URL=http://ec2-204-236-241-81.compute-1.amazonaws.com:8000
     ports:
       - "80:80"
     depends_on:

@@ -123,12 +123,11 @@ jobs:
       - name: Build and push Frontend
         uses: docker/build-push-action@v5
         with:
-          context: ./frontend  # Asegúrate que esto apunta al directorio frontend
+          context: ./frontend
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/inventory-frontend:latest
           build-args: |
             VITE_API_URL=http://ec2-204-236-241-81.compute-1.amazonaws.com:8000
-
   deploy:
     needs: [build-and-push]
     runs-on: ubuntu-latest
