@@ -1,23 +1,35 @@
-# Usar una imagen base oficial de Python
-FROM python:3.11-slim
+# Build stage
+FROM node:18-alpine as build
 
-# Establecer el directorio de trabajo
 WORKDIR /app
 
-# Copiar los archivos de requisitos primero
-COPY requirements.txt .
+# Copy package files
+COPY package*.json ./
 
-# Instalar dependencias
-RUN pip install --no-cache-dir -r requirements.txt
+# Install dependencies
+RUN npm install
 
-# Copiar el resto del código
+# Copy source code
 COPY . .
 
-# Establecer PYTHONPATH
-ENV PYTHONPATH=/app
+# Add build argument for API URL
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
 
-# Script de inicio
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
+# Build application
+RUN npm run build
 
-CMD ["/start.sh"]
+# Production stage
+FROM nginx:alpine
+
+# Copy built assets from build stage
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port 80
+EXPOSE 80
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]

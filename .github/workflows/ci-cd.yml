@@ -26,7 +26,6 @@ jobs:
       - name: Run tests with coverage
         run: |
           cd backend
-          # Cambiado para generar tanto XML como HTML
           python -m pytest --cov=src tests/ --cov-report=xml:coverage.xml --cov-report=html
           
       - name: Store coverage report
@@ -127,6 +126,8 @@ jobs:
           context: ./frontend
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/inventory-frontend:latest
+          build-args: |
+            VITE_API_URL=http://ec2-204-236-241-81.compute-1.amazonaws.com:8000
 
   deploy:
     needs: [build-and-push]
@@ -134,13 +135,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.EC2_SSH_KEY }}
+          known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
+          
+      - name: Adding Known Hosts
+        run: ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+      
       - name: Copy docker-compose file to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: "docker-compose.yml"
+          source: "docker-compose.yml,monitoring/prometheus/prometheus.yml"
           target: "/home/ubuntu/app"
           
       - name: Deploy to EC2
@@ -151,7 +161,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/ubuntu/app
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/inventory-frontend:latest
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/inventory-backend:latest
-            sudo docker-compose down
-            sudo docker-compose up -d
+            echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" > .env
+            docker-compose pull
+            docker-compose down
+            docker-compose up -d
